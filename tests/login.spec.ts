@@ -1,16 +1,14 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/login.page';
 
 
 test('login success @positive', async ({ page }) => {
   // precondition
+  const loginPage = new LoginPage(page);
   await page.goto('https://www.emra.chat/login');
 
   // steps
-  await page.getByRole('textbox', { name: 'Email' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('adhi@gmail.com');
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('Tester!3');
-  await page.getByRole('button', { name: 'Sign In' }).click();
+  await loginPage.loginAs('adhi@gmail.com', 'Tester!3');
 
   // expected results
   await expect(page.getByText('Successfully logged in!')).toBeVisible();
@@ -20,14 +18,11 @@ test('login success @positive', async ({ page }) => {
 
 test('login unsuccessful @negative', async ({ page }) => {
   // precondition
+  const loginPage = new LoginPage(page);
   await page.goto('https://www.emra.chat/login');
 
   // steps
-  await page.getByRole('textbox', { name: 'Email' }).click();
-  await page.getByRole('textbox', { name: 'Email' }).fill('test@gmail.com');
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('test');
-  await page.getByRole('button', { name: 'Sign In' }).click();
+  await loginPage.loginAs('test@gmail.com', 'test');
 
   // expected results
   await expect(page.getByText('Invalid credentials')).toBeVisible();
